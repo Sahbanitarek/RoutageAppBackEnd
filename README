@@ -1,0 +1,59 @@
+Pour utiliser cette application :
+
+    1. Assurez-vous d'avoir un serveur IBM MQ en cours d'exécution
+    2. Configurez les paramètres de connexion dans application.properties selon votre environnement MQ
+    3. Adaptez l'entité MessageEntity selon la structure des messages que vous recevez
+    4. Modifiez la configuration de la base de données selon votre SGBD (l'exemple utilise H2 en mémoire)
+
+Fonctionnement :
+
+    . L'application se connecte à la file MQ spécifiée
+    . Le @JmsListener écoute en continu les nouveaux messages
+    . Chaque message reçu est :
+        Affiché dans la console
+        Stocké dans la base de données avec un horodatage
+    . Les messages sont persistés via JPA dans la base de données relationnelle
+
+Pour une implémentation en production, vous pourriez ajouter :
+
+    . Gestion des erreurs et reconnexion
+    . Validation des messages
+    . Configuration des transactionsx
+    . Monitoring et logging
+    . Traitement asynchrone des messages
+
+// Lancement de l'application avec Docker
+
+ 1. Construction de l'image Docker Exécutez cette commande dans le terminal, à la racine du projet :
+
+      docker build -t RoutageAppBackEnd:latest .
+
+  2. Lancement du conteneur Une fois l'image construite, lancez le conteneur :
+
+      docker run -d -p 8080:8080 --name mon-app RoutageAppBackEnd:latest
+
+      -d : mode détaché
+      -p 8080:8080 : mapping du port hôte:conteneur
+      --name : nom du conteneur
+
+   3. Configuration supplémentaire (optionnel)
+
+    a) Variables d'environnement :
+
+     docker run -d -p 8080:8080 -e "SPRING_PROFILES_ACTIVE=prod" RoutageAppBackEnd
+
+    Vérification
+
+    . Vérifiez que le conteneur tourne :
+
+        docker ps
+
+    . Consultez les logs :
+
+        docker logs mon-app
+
+    . Gestion du conteneur
+
+       Arrêter : docker stop mon-app
+       Supprimer : docker rm mon-app
+       Supprimer l'image : docker rmi RoutageAppBackEnd
